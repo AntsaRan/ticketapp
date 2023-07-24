@@ -1,0 +1,80 @@
+.ticket-list-content {
+    margin-top: 45px;
+    margin-bottom: 65px;
+}
+
+.searchbar-container {
+    width: 100%;
+    border: none !important;
+    position: relative;
+}
+
+.searchicon {
+    background-color: transparent;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 21px 21px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    height: 100%;
+    outline: 0;
+    padding: 0;
+    pointer-events: auto;
+    position: absolute;
+    right: 2%;
+    top: 15%;
+    z-index: 100;
+    color: lightslategray;
+}
+
+.mysearchbar {
+    background-color: var(--light-primary-color) !important;
+    border-radius: 30px !important;
+    width: 100% !important;
+    border: none !important;
+    height: 50px !important;
+    box-shadow: 5px 5px 5px rgb(173, 173, 173) !important;
+    position: relative !important;
+    will-change: auto !important;
+}
+
+.addticket-btn-container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding-left: 10%;
+}
+
+.addticket-btn {
+    width: 200px;
+}
+
+.filter-container {
+    display: flex;
+    margin-top: 45px;
+    padding: 0 16px;
+}
+
+.filter_text {
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+.filters-content{
+    margin-top: 25px;
+
+}
+.mat-form-field {
+    margin-left: 8px;
+
+}
+
+.inputs-container mat-form-field+mat-form-field {
+    margin-top: 15px;
+    margin-left: 8px;
+}
+div.hidden {
+    display: none;
+  }
+  
