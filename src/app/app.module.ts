@@ -12,6 +12,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatTableModule} from '@angular/material/table';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, Router } from '@angular/router';
 import { TicketDetailsComponent } from './ticket-details/ticket-details.component';
@@ -32,7 +33,7 @@ const routes: Routes = [
         MatSidenavModule, MatToolbarModule,
         RouterModule.forRoot(routes),BrowserAnimationsModule,
         MatButtonModule, MatDividerModule, MatIconModule,
-        MatInputModule,MatSelectModule],
+        MatInputModule,MatSelectModule,MatTableModule,MatProgressSpinnerModule],
 
     providers: [BackendService],
     bootstrap: [AppComponent]
