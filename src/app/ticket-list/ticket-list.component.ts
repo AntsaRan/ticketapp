@@ -1,11 +1,13 @@
 import { BackendService } from '../backend.service';
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { Ticket } from 'src/interfaces/ticket.interface';
 import { TicketUser } from 'src/app/model/ticketUser';
 import { User } from 'src/interfaces/user.interface';
+import { MatTableModule } from '@angular/material/table'; // Assurez-vous d'importer le module MatTableModule
+import { concatMap, forkJoin } from 'rxjs';
+
 @Component({
   selector: 'app-ticket-list',
   templateUrl: './ticket-list.component.html',
@@ -27,28 +29,35 @@ import { User } from 'src/interfaces/user.interface';
 })
 export class TicketListComponent {
   tickets: TicketUser[] = [];
-  datasource
   isDivHidden = true;
-
+  dataready=false;
   constructor(private backendService: BackendService,
-    private router: Router, public dialog: MatDialog) {
+    private router: Router) {
+  }
+  getTickets() {
+    this.backendService.tickets().subscribe(tickets => {
+      if (tickets) {
+        console.log(tickets);
+        const donnees = tickets.map(ticket => this.backendService.user(ticket.assigneeId));
+        forkJoin(donnees).subscribe((users: User[]) => {
+          users.forEach((user, index) => {
+            const ticket = tickets[index];
+            const ticketUser = new TicketUser(
+              ticket.id,
+              ticket.completed,
+              user,
+              ticket.description
+            );
+            console.log(ticketUser);
+            this.tickets.push(ticketUser);
+          });
+          this.dataready=true;
+        });
+      }
+    });
   }
 
-  getTickets() {
-    this.backendService.tickets()
-      .subscribe(ticket => {
-        if (ticket) {
-          ticket.forEach(t => {
-            console.log(t);
-            let userid=t.assigneeId;
-            let user=this.getUserById(userid);
-            let ticketuser=new TicketUser(t.id,t.completed,user,t.description);
-            this.tickets.push(ticketuser);
-          })
-      
-        }
-      });
-  }
+
   getUserById(id: number): User {
     let userFound;
     this.backendService.user(id)
@@ -65,5 +74,8 @@ export class TicketListComponent {
   togglefilter() {
     this.isDivHidden = !this.isDivHidden; // toggle
   }
+  dataSource = this.tickets;
+  onButtonClick(row: any) {
 
+  }
 }
