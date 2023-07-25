@@ -1,0 +1,12 @@
+.addticket_form{
+    width: 100%;
+    display: flex;
+    margin: auto;
+    justify-content: center;
+}
+.alert{
+    color: red;
+}
+.success{
+    color: green;
+}
