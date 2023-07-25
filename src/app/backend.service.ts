@@ -15,6 +15,8 @@ function randomDelay() {
 
 @Injectable()
 export class BackendService {
+    private storagekey = 'storedTickets'; // La clé pour stocker les tickets dans localStorage
+
     public storedTickets: Ticket[] = [
         {
             id: 0,
@@ -24,20 +26,33 @@ export class BackendService {
         },
         {
             id: 1,
-            completed: false,
+            completed: true,
             assigneeId: 111,
             description: 'Move the desk to the new location'
         }
     ];
+
+    constructor() {
+        const storedTickets = JSON.parse(localStorage.getItem(this.storagekey));
+        if (storedTickets) {
+            this.lastId = Math.max(...storedTickets.map((ticket: Ticket) => ticket.id));
+        } else {
+            this.lastId = 0;
+            localStorage.setItem(this.storagekey, JSON.stringify(this.storedTickets));
+        }
+    }
 
     public storedUsers: User[] = [{ id: 111, name: 'Victor' }];
 
     private lastId: number = 1;
 
     private findUserById = (id: number) => this.storedUsers.find((user: User) => user.id === +id);
-    private findTicketById = (id: number) => this.storedTickets.find((ticket: Ticket) => ticket.id === +id);
+    private findTicketById = (id: number) => JSON.parse(localStorage.getItem(this.storagekey))
+        .find((ticket: Ticket) => ticket.id === +id);
 
     public tickets(): Observable<Ticket[]> {
+        this.storedTickets = JSON.parse(localStorage.getItem(this.storagekey));
+        console.log(this.storedTickets + " from tickets");
         return of(this.storedTickets).pipe(delay(randomDelay()));
     }
 
@@ -56,6 +71,9 @@ export class BackendService {
     }
 
     public newTicket(payload: { description: string }): Observable<Ticket> {
+        console.log(this.lastId + " LAST ID");
+        this.storedTickets = JSON.parse(localStorage.getItem(this.storagekey));
+        console.log(this.storedTickets + " avant ajout");
         const newTicket: Ticket = {
             id: ++this.lastId,
             completed: false,
@@ -65,8 +83,28 @@ export class BackendService {
 
         return of(newTicket).pipe(
             delay(randomDelay()),
-            tap((ticket: Ticket) => this.storedTickets.push(ticket))
+            tap((ticket: Ticket) => this.storedTickets.push(ticket)),
+            tap(() => console.log(this.storedTickets + " after push")),
+            tap(() => this.savestoredTicketsToStorage()),
+            tap(() => console.log(JSON.stringify(localStorage.getItem(this.storagekey)) + " StoRAGE"))
         );
+    }
+    /*public newTicket(payload: { description: string }): Observable<Ticket> {
+            const newTicket: Ticket = {
+                id: ++this.lastId,
+                completed: false,
+                assigneeId: null,
+                description: payload.description
+            };
+    
+            return of(newTicket).pipe(
+                delay(randomDelay()),
+                tap((ticket: Ticket) => this.storedTickets.push(ticket))
+            );
+        }*/
+    savestoredTicketsToStorage() {
+        console.log("ato save store");
+        localStorage.setItem(this.storagekey, JSON.stringify(this.storedTickets));
     }
 
     public assign(ticketId: number, userId: number): Observable<Ticket> {
@@ -81,7 +119,7 @@ export class BackendService {
                 })
             );
         }
-
+        this.savestoredTicketsToStorage();
         return throwError(new Error('ticket or user not found'));
     }
 
