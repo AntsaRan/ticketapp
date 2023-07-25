@@ -91,3 +91,14 @@ div.hidden {
 .ticketsList{
     margin-top: 5%;
 }
+.completed-ticket{
+    color: green;
+    font-weight: bold;
+}
+.undone-ticket{
+    color: red;
+    font-weight: bold;
+}
+.ticket-assignee{
+    font-weight: bold;
+}
