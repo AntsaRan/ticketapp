@@ -1,1 +1,44 @@
-<p>ticket-details works!</p>
+<div class="container">
+    <div class="toolbar-header">
+        <mat-toolbar>
+            <h1 class="toolbar-header-title">Ticket Detail</h1>
+        </mat-toolbar>
+    </div>
+    <!-- search bar and add ticket button-->
+    <div class="loaderspinner">
+        <mat-spinner [diameter]="70" *ngIf="!isDataLoaded"></mat-spinner>
+    </div>
+    <section *ngIf="isDataLoaded">
+        <mat-card class="ticket-card">
+            <mat-card-content>
+                <b>Description</b>
+                <p>
+                    The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
+                    A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
+                    bred for hunting.
+                </p>
+                <form class="formcontainer">
+                    <p><b>Assignee</b></p>
+                    <p *ngIf="user">{{user.name}}</p>
+                    <mat-form-field *ngIf="!user">
+                        <input class="custom-input-container" type="text" matInput [formControl]="assigneeCtrl"
+                            [matAutocomplete]="auto">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                            <mat-option *ngFor="let user of filterusers | async" [value]="user">
+                                {{user.name}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                    <p><b>Status</b></p>
+                    <p *ngIf="ticket.completed" class="statusCompleted"><b>Complete</b></p>
+                    <p *ngIf="!ticket.completed" class="statusNotCompleted"><b>Undone</b></p>
+                    <button *ngIf="!ticket.completed" mat-fab extended class="successbtn">
+                        <mat-icon>checked</mat-icon>
+                        Complete
+                    </button>
+                </form>
+            </mat-card-content>
+
+        </mat-card>
+    </section>
+</div>

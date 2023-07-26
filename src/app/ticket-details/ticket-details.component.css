@@ -1,0 +1,19 @@
+.formcontainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .statusCompleted{
+    color: green;
+    font-weight: bold;
+    font-size: 20px;
+  }
+  .successbtn{
+    background-color: rgb(108, 197, 108);
+  }
+  .statusNotCompleted{
+    color: rgb(170, 0, 0);
+    font-weight: bold;
+    font-size: 20px;
+  }
