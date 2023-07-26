@@ -50,3 +50,8 @@ thead {
 thead th {
     color: white !important;
 }
+.loaderspinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
