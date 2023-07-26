@@ -42,6 +42,14 @@ export class TicketListComponent {
   ticketIsAdded = false;
   addticketmessage = "";
 
+  // FILTERS
+  filterAssignee: string = "";
+  filterDesc: string = "";
+  statusFilter: boolean | null = null;
+
+  //DETAILS
+  ticketID: number | null = null;
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -59,31 +67,55 @@ export class TicketListComponent {
     this.dataSource = new MatTableDataSource(this.ticketslist);
 
   }
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  applyFilter(assigneeFilterValue: string, statusFilterValue: boolean | null, descFilterValue: string) {
+    const filters = {
+      assignee: assigneeFilterValue.trim().toLowerCase(),
+      status: statusFilterValue,
+      description: descFilterValue.trim().toLowerCase()
+    };
+
+    // Apply each filter independently
+    this.dataSource.data = this.ticketslist.filter((ticketUser: TicketUser) => {
+      const assigneeFiltering = ticketUser.user?.name?.toLowerCase() || '-';
+      const statusFiltering = filters.status === null || ticketUser.completed === filters.status;
+      const descFiltering = ticketUser.description?.toLowerCase().includes(filters.description) || filters.description === '';
+
+      // Combine the filters using OR logic
+      return (assigneeFiltering.includes(filters.assignee) || filters.assignee === '') && statusFiltering && descFiltering;
+    });
 
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+  applyFilterDesc(filterValue: string) {
+    /*  this.dataSource.filterPredicate = (ticketUser: TicketUser, filter: string) => {
+        const desc = ticketUser.description?.toLowerCase(); // Vérifier si la description est défini pour éviter les erreurs si ce n'est pas le cas
+        return desc.includes(filter); // retourne vrai si la description contient le mot tapé false sinon
+      };
+      filterValue = filterValue.trim().toLowerCase();
+      this.dataSource.filter = filterValue;
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }*/
+    this.filterDesc = filterValue.toLowerCase();
+    this.applyFilter(this.filterAssignee, this.statusFilter, this.filterDesc);
+
   }
   applyFilterUser(filterValue: string) {
-    this.dataSource.filterPredicate = (ticketUser: TicketUser, filter: string) => {
-      const userName = ticketUser.user?.name.toLowerCase() || '-'; // Vérifier si user est défini pour éviter les erreurs si l'utilisateur n'est pas assigné
-      return userName.includes(filter);
-    };
-    filterValue = filterValue.trim().toLowerCase();
-    this.dataSource.filter = filterValue;
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
-  }
-
-  findCompleted() {
+    this.filterAssignee = filterValue;
+    this.applyFilter(this.filterAssignee, this.statusFilter, this.filterDesc);
 
   }
-  findUndone() {
 
+  findCompleted(filterValue: boolean) {
+    this.statusFilter = filterValue;
+    this.applyFilter(this.filterAssignee, this.statusFilter, this.filterDesc);
+
+  }
+  reinitStatus() {
+    this.statusFilter = null;
+    this.applyFilter(this.filterAssignee, this.statusFilter, this.filterDesc);
   }
   getTickets() {
     this.dataready = false;
