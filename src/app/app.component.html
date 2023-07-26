@@ -6,7 +6,11 @@
     </li>
 </ul> -->
 <mat-sidenav-container class="fixed-sidenav-container">
-  <mat-sidenav class="sidenav-container" mode="side" opened></mat-sidenav>
+  <mat-sidenav class="sidenav-container" mode="side" opened>
+    <div class="nav-Btns">
+        <mat-icon routerLink="/" class="homeicon" >home</mat-icon>
+    </div>
+  </mat-sidenav>
   <mat-sidenav-content>
     <div>
       <router-outlet></router-outlet>
