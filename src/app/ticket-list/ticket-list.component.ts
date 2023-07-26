@@ -63,7 +63,7 @@ export class TicketListComponent {
 
   }
   ngOnInit(): void {
-    this.getTickets();
+    this.getTickets1();
     this.dataSource = new MatTableDataSource(this.ticketslist);
 
   }
@@ -147,7 +147,35 @@ export class TicketListComponent {
     });
   }
 
+  getTickets1() {
+    this.dataready = false;
+    this.ticketslist = [];
+    this.backendService.tickets1().subscribe(tickets => { //récupère les tickets
+      if (tickets) {
+        const donnees = tickets.map(ticket => // va boucler chaque ticket
+          ticket.assigneeId !== null ? this.backendService.user(ticket.assigneeId) : of(null) // va rechercher l'utilisateur responsable du ticket et fa rassembler les observables dans une constante
+        );
+        forkJoin(donnees).subscribe((users: User[]) => {
+          users.forEach((user, index) => {
+            const ticket = tickets[index];
+            const ticketUser = new TicketUser(
+              ticket.id,
+              ticket.completed ? ticket.completed : false,
+              user as User | null,
+              ticket.description
+            );
+            console.log(ticketUser);
+            this.ticketslist.push(ticketUser);
 
+          });
+          this.dataready = true;
+          this.dataSource.data = this.ticketslist;
+          console.log(JSON.stringify(this.dataSource.data) + " DATA SourCE DATAAA");
+          this.dataSource.paginator = this.paginator;
+        });
+      }
+    });
+  }
   getUserById(id: number): User {
     let userFound;
     this.backendService.user(id)
@@ -171,7 +199,7 @@ export class TicketListComponent {
       console.log(result);
       if (result.event) {
         console.log(" NETY");
-        this.getTickets();
+        this.getTickets1();
       } else {
 
       }
