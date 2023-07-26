@@ -12,8 +12,8 @@ export class AddticketDialogComponent {
 
   ticketIsAdded = false;
   errorinsert = false;
-  errormessage = "Une erreur s'est produite, veuillez réessayer.";
-  sucessmessage = "Ajout effectué!";
+  errormessage = "An error occured, please try again.";
+  sucessmessage = "Successfully added!";
   addticketmessage = "";
   descriptionTicket: string = "";
   inprogress = false;
