@@ -1,17 +1,22 @@
 <h1 mat-dialog-title>Add a ticket</h1>
 <div mat-dialog-content>
-    <form (submit)="add_ticket()">
+    <form (submit)="add_ticket()" #form="ngForm">
         <div>
             <mat-form-field class="addticket_form" hintLabel="Max 200 characters">
                 <mat-label>Description</mat-label>
-                <textarea rows="2" cols="20" matInput #input maxlength="200"
+                <textarea required rows="2" cols="20" matInput #input maxlength="200"
                     placeholder="Enter a short description for your ticket" [(ngModel)]="descriptionTicket"
-                    name="descriptionTicket"></textarea>
+                    name="descriptionTicket" #description="ngModel"></textarea>
             </mat-form-field>
+        </div>
+        <div *ngIf="description.dirty || description.touched">
+            <div class="alert"*ngIf="description.errors?.['required']">
+                Description required
+            </div>
         </div>
         <div mat-dialog-actions class="addticket_form">
             <button mat-button mat-dialog-close>Cancel</button>
-            <button mat-button cdkFocusInitial type="submit">Add</button>
+            <button class="addbtnform" [disabled]="!form.valid" mat-button cdkFocusInitial type="submit">Add</button>
         </div>
         <mat-progress-bar mode="indeterminate" *ngIf="inprogress"></mat-progress-bar>
         <div *ngIf="errorinsert" class="alert">{{errormessage}}</div>

@@ -17,7 +17,7 @@ export class AddticketDialogComponent {
   addticketmessage = "";
   descriptionTicket: string = "";
   inprogress = false;
-
+  isFormValid =false;
   constructor(private backendService: BackendService, private dialogRef: MatDialogRef<AddticketDialogComponent>
   ) {
 
@@ -30,7 +30,7 @@ export class AddticketDialogComponent {
       {
         description: this.descriptionTicket,
       };
-      this.backendService.newTicket(ticket)
+      this.backendService.newTicket1(ticket)
         .subscribe(newticket => {
           if (newticket) {
             this.inprogress = !this.inprogress;
