@@ -3,6 +3,12 @@
 @import '../node_modules/@angular/material/prebuilt-themes/indigo-pink.css';
 
 html,
+:root {
+    --primary-color: #3f51b5;
+    --light-primary-color: #e2e6fc;
+    --dark-primary-color: #34449e;
+}
+
 body {
     height: 100%;
     color: rgb(51, 51, 51) !important;
@@ -17,14 +23,11 @@ body {
     max-width: 1676px !important;
 }
 
-:root {
-    --primary-color: #3f51b5;
-    --light-primary-color: #e2e6fc;
-    --dark-primary-color: #34449e;
-}
+
 
 .toolbar-header {
     margin-top: 6%;
+    margin-bottom: 5%;
 }
 
 .mat-toolbar h1 {
@@ -50,8 +53,29 @@ thead {
 thead th {
     color: white !important;
 }
+
 .loaderspinner {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.nav-Btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.homeBtn {
+    height: 50px !important;
+    width: 50px !important;
+}
+
+.homeicon {
+    cursor: pointer;
+    height: 50px !important;
+    width: 50px !important;
+    font-size: 50px !important;
+
 }
