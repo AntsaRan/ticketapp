@@ -26,9 +26,9 @@ export class TicketDetailsComponent {
   ticket: Ticket = null;
   ticketUSer: TicketUser = null;
   user: User = null;
-  isDataLoaded=false;
+  isDataLoaded = false;
   isInputFocused = false;
-
+  selectedUser: User;
   private _filter(name: string): User[] {
     const filterValue = name.toLowerCase();
 
@@ -45,9 +45,7 @@ export class TicketDetailsComponent {
   }
   ngOnInit() {
     this.getTicket().subscribe(() => {
-      console.log(this.user.name);
       this.assigneeCtrl.setValue(this.user); // Set the initial value of the assigneeCtrl to the user object
-      console.log(this.user.name +" after");
       this.filterusers = this.assigneeCtrl.valueChanges.pipe(
         startWith(''),
         map(value => {
@@ -55,28 +53,73 @@ export class TicketDetailsComponent {
           return name ? this._filter(name as string) : this.users.slice();
         })
       );
-      this.isDataLoaded=true;
+      this.isDataLoaded = true;
     });
   }
   displayFn(user: User): string {
     return user && user.name ? user.name : '';
   }
+  /* getTicket() {
+     return this.backendService.ticket(this.ticketId).pipe(
+       switchMap(ticket => {
+         this.ticket = ticket;
+         return this.backendService.user(ticket.assigneeId ? ticket.assigneeId : null);
+       })
+     ).pipe(
+       switchMap(user => {
+         this.user = user;
+         this.ticketUSer = new TicketUser(this.ticket.id, this.ticket.completed, user, this.ticket.description);
+         return this.backendService.users();
+       })
+     ).pipe(
+       map(users => {
+         this.users = users;
+       })
+     );
+   }*/
   getTicket(): Observable<void> {
     return this.backendService.ticket(this.ticketId).pipe(
       switchMap(ticket => {
         this.ticket = ticket;
-        return this.backendService.user(ticket.assigneeId);
-      })
-    ).pipe(
-      switchMap(user => {
-        this.user = user;
-        this.ticketUSer = new TicketUser(this.ticket.id, this.ticket.completed, user, this.ticket.description);
-        return this.backendService.users();
+        console.log(JSON.stringify(ticket) + " ticket")
+        return this.backendService.user(ticket.assigneeId ? ticket.assigneeId : null)
+          .pipe(
+            switchMap(user => {
+              this.user = user;
+              this.ticketUSer = new TicketUser(this.ticket.id, this.ticket.completed, user, this.ticket.description);
+              return this.backendService.users();
+            })
+          );
       })
     ).pipe(
       map(users => {
         this.users = users;
       })
     );
+  }
+  completeTicket() {
+    this.backendService.complete1(this.ticket.id, true).subscribe(t => {
+      if (t) {
+        console.log(JSON.stringify(t) + "complete");
+        this.getTicket().subscribe(() => {
+        })
+      }
+    })
+  }
+  uncompleteTicket() { 
+
+  }
+  assign() {
+    if (this.selectedUser) {
+      this.backendService.assign1(this.ticket.id, this.selectedUser.id).subscribe(u => {
+        this.getTicket().subscribe(() => {
+          this.selectedUser = null;
+        });
+      });
+    }
+  }
+  onOptionSelected(user: any) {
+    console.log('Selected User:', JSON.stringify(user));
+    this.selectedUser = user;
   }
 }

@@ -11,32 +11,61 @@
     <section *ngIf="isDataLoaded">
         <mat-card class="ticket-card">
             <mat-card-content>
-                <b>Description</b>
-                <p>
-                    The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-                    A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-                    bred for hunting.
-                </p>
-                <form class="formcontainer">
-                    <p><b>Assignee</b></p>
-                    <p *ngIf="user">{{user.name}}</p>
-                    <mat-form-field *ngIf="!user">
-                        <input class="custom-input-container" type="text" matInput [formControl]="assigneeCtrl"
-                            [matAutocomplete]="auto">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                            <mat-option *ngFor="let user of filterusers | async" [value]="user">
-                                {{user.name}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-form-field>
-                    <p><b>Status</b></p>
-                    <p *ngIf="ticket.completed" class="statusCompleted"><b>Complete</b></p>
-                    <p *ngIf="!ticket.completed" class="statusNotCompleted"><b>Undone</b></p>
-                    <button *ngIf="!ticket.completed" mat-fab extended class="successbtn">
-                        <mat-icon>checked</mat-icon>
-                        Complete
-                    </button>
-                </form>
+                <div class="detail-div">
+                    <b>Description</b>
+                </div>
+                <mat-divider></mat-divider>
+
+                <div class="detail-div formcontainer">
+                    <p class="desc-container">
+                      {{ticket.description}}
+                    </p>
+                </div>
+                <div class="detail-div">
+                    <form class="formcontainer">
+                        <div class="formcontent">
+                            <!-- si il y a un assignee -->
+                            <p class="detail-div"><b>Assignee</b></p>
+                            <mat-divider></mat-divider>
+
+                            <p *ngIf="user">{{user.name}}</p>
+                            <!-- si il n'y a pas un assignee -->
+                        </div>
+                        <div class="formcontent">
+                            <mat-form-field *ngIf="!user" class="autocompleteField">
+                                <input class="custom-input-container" type="text" matInput [formControl]="assigneeCtrl"
+                                    [matAutocomplete]="auto">
+                                <mat-label>Assignee</mat-label>
+                                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"  (optionSelected)="onOptionSelected($event.option.value)">
+                                    <mat-option *ngFor="let user of filterusers | async" [value]="user">
+                                        {{user.name}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-form-field>
+                            <button *ngIf="!ticket.assigneeId" mat-fab extended color="primary" (click)="assign()">
+                                Assign
+                            </button>
+                        </div>
+                        <mat-divider></mat-divider>
+                        <div class="formcontent">
+                            <p class="detail-div"><b>Status</b></p>
+                            <mat-divider></mat-divider>
+
+                            <p class="detail-div" *ngIf="ticket.completed" class="statusCompleted"><b>Complete</b></p>
+                            <p class="detail-div" *ngIf="!ticket.completed" class="statusNotCompleted"><b>Undone</b></p>
+                            <button *ngIf="!ticket.completed" [disabled]="!ticket.assigneeId" mat-fab extended
+                                class="successbtn" (click)="completeTicket()">
+                                <mat-icon>checked</mat-icon>
+                                Complete
+                            </button>
+                            <button *ngIf="ticket.completed" [disabled]="!ticket.assigneeId" mat-fab extended
+                                class="undobtn" (click)="uncompleteTicket()">
+                                <mat-icon>checked</mat-icon>
+                                Undo
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </mat-card-content>
 
         </mat-card>
