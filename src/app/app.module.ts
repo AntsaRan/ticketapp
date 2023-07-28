@@ -27,6 +27,8 @@ import { Routes, RouterModule, Router } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TicketDetailsComponent } from './ticket-details/ticket-details.component';
 import { TicketListComponent } from './ticket-list/ticket-list.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { ErrorToastComponent } from './error-toast/error-toast.component';
 
 const routes: Routes = [
     {
@@ -34,10 +36,13 @@ const routes: Routes = [
     },
     {
         path: "ticketDetail/:id",component: TicketDetailsComponent
+    },
+    {
+        path: "**",component: PageNotFoundComponent
     }
 ]
 @NgModule({
-    declarations: [AppComponent, TicketDetailsComponent, TicketListComponent, AddticketDialogComponent],
+    declarations: [AppComponent, TicketDetailsComponent, TicketListComponent, AddticketDialogComponent, ErrorToastComponent],
     imports: [
         BrowserModule, MatButtonModule,
         MatFormFieldModule, MatCheckboxModule,
