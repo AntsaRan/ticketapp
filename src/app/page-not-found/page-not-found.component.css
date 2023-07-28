@@ -1,4 +1,7 @@
 .notfound404{
-    width: 100%;
-    background-image: url("/assets/img/Na_Nov_26.jpg");
+    width: 90%;
+    height: 80vh;
+    background-image: url(/assets/img/Na_Nov_26.jpg);
+    background-position: center;
+    background-size: cover;
 }
