@@ -19,14 +19,23 @@ body {
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+.fixeToolbar{
+    position: fixed;
+    z-index: 100;
+}
+.appContent{
+    padding-top: 64px;
+}
+.appContainer{
+    width: 100vw;
+}
 .container {
-    max-width: 1676px !important;
+    max-width: 1204px !important;
+/*    padding-top: 6%;*/
 }
 
 
-
 .toolbar-header {
-    margin-top: 6%;
     margin-bottom: 5%;
 }
 
@@ -36,14 +45,8 @@ body {
     line-height: 1.2;
 }
 
-.mat-toolbar {
-    background: none !important;
-    ;
-    color: rgba(0, 0, 0, .87);
-}
-
 .sidenav-container {
-    min-width: 160px;
+    width: 15%;
 }
 
 thead {
@@ -77,5 +80,47 @@ thead th {
     height: 50px !important;
     width: 50px !important;
     font-size: 50px !important;
+}
 
+.noTicket {
+    flex-direction: column;
+    width: 50%;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+
+/* MEDIA QUERIES */
+/* For small phone screens up to 767 pixels wide */
+@media screen and (max-width: 767px) {
+    .mobileToolBar {
+        display: block;
+    }
+
+    .fixed-sidenav-container {
+        display: none !important;
+    }
+}
+
+/* For larger phone screens from 768 pixels up to 991 pixels wide */
+@media screen and (min-width: 768px) and (max-width: 991px) {
+    .fixed-sidenav-container {
+        display: none !important;
+    }
+}
+
+/* For extra small phone screens up to 575 pixels wide */
+@media screen and (max-width: 575px) {
+    .fixed-sidenav-container {
+        display: none !important;
+    }
+}
+
+/* For extra large phone screens from 992 pixels up to 1199 pixels wide */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+    .fixed-sidenav-container {
+        display: none !important;
+    }
 }
