@@ -1,19 +1,11 @@
-<!--<h2>Tickets</h2>
-
-<ul>
-    <li *ngFor="let ticket of tickets$ | async">
-        Ticket: {{ ticket.id }}, {{ ticket.description }}
-    </li>
-</ul> -->
-<mat-sidenav-container class="fixed-sidenav-container">
-  <mat-sidenav class="sidenav-container" mode="side" opened>
-    <div class="nav-Btns">
-        <mat-icon routerLink="/" class="homeicon" >home</mat-icon>
-    </div>
-  </mat-sidenav>
-  <mat-sidenav-content>
-    <div>
-      <router-outlet></router-outlet>
-    </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+<div class="appContainer">
+  <mat-toolbar color="primary" class="fixeToolbar">
+    <button  routerLink="/" mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+      <mat-icon>home</mat-icon>
+    </button>
+    <span>Tickets Management</span>
+  </mat-toolbar>
+  <div class="appContent">
+    <router-outlet></router-outlet>
+  </div>
+</div>
