@@ -11,11 +11,13 @@ export class UtilsService {
   verticalPosition: MatSnackBarVerticalPosition = 'top';
 
   constructor(private _snackBar: MatSnackBar) { }
-  
+
   errorToast() {
+    const classToast = 'my-custom-snackbar'; // Apply the custom style defined in CSS
     this._snackBar.open('An error occured, please try again', 'ok', {
       horizontalPosition: this.horizontalPosition,
       verticalPosition: this.verticalPosition,
+      panelClass:[classToast],
     });
   }
 }
