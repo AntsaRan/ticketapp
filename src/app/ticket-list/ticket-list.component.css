@@ -38,9 +38,10 @@
     will-change: auto !important;
 }
 
-.mysearchbar:focus{
-    outline:none;
+.mysearchbar:focus {
+    outline: none;
 }
+
 .addticket-btn-container {
     display: flex;
     align-items: center;
@@ -68,14 +69,14 @@
 
 }
 
-.mat-form-field {
-    margin-left: 8px;
-
-}
-
 .inputs-container mat-form-field+mat-form-field {
     margin-top: 15px;
     margin-left: 8px;
+}
+
+.filterfield {
+    margin-left: 15px !important;
+
 }
 
 div.hidden {
@@ -89,6 +90,7 @@ div.hidden {
 
 .ticketsList {
     margin-top: 5%;
+    width: 90%!important;
 }
 
 .completed-ticket {
@@ -103,6 +105,19 @@ div.hidden {
 
 .ticket-assignee {
     font-weight: bold;
+}
+.ticketsRow{
+    box-shadow: 5px 5px 5px rgb(173, 173, 173) !important;
+    margin-bottom: 10px;
+}
+.seebtn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 91px;
+}
+.ticketsRow{
+    margin-bottom: 40px;
 }
 
 /* MEDIA QUERIES */
@@ -126,6 +141,7 @@ div.hidden {
         justify-content: center;
         align-items: center;
     }
+
 }
 
 /* For extra small phone screens up to 575 pixels wide */
@@ -137,6 +153,11 @@ div.hidden {
         justify-content: center;
         align-items: center;
     }
+
+    .filterfield {
+        width: 80%;
+    }
+
 }
 
 /* For extra large phone screens from 992 pixels up to 1199 pixels wide */
@@ -148,4 +169,14 @@ div.hidden {
         justify-content: center;
         align-items: center;
     }
+
+    .filterfield {
+        width: 80%;
+    }
+
+}
+
+.mat-toolbar {
+    background: none !important;
+    color: rgba(0, 0, 0, .87);
 }

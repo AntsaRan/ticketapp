@@ -6,7 +6,7 @@ import { Ticket } from 'src/interfaces/ticket.interface';
 import { TicketUser } from 'src/app/model/ticketUser';
 import { User } from 'src/interfaces/user.interface';
 import { MatTableModule } from '@angular/material/table'; // Assurez-vous d'importer le module MatTableModule
-import { concatMap, forkJoin } from 'rxjs';
+import { catchError, concatMap, forkJoin } from 'rxjs';
 import { MatDialog, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { AddticketDialogComponent } from '../addticket-dialog/addticket-dialog.component';
 import { of } from 'rxjs';
@@ -41,7 +41,7 @@ export class TicketListComponent {
   dataSource: MatTableDataSource<TicketUser>;
   ticketIsAdded = false;
   addticketmessage = "";
-
+  ticketNotFound = false;
   // FILTERS
   filterAssignee: string = "";
   filterDesc: string = "";
@@ -57,134 +57,96 @@ export class TicketListComponent {
     private router: Router, private dialog: MatDialog) {
   }
 
+
+  ngOnInit(): void {
+    this.getTickets(); 
+    this.dataSource = new MatTableDataSource(this.ticketslist);
+  }
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
   }
-  ngOnInit(): void {
-    this.getTickets1();
-    this.dataSource = new MatTableDataSource(this.ticketslist);
 
-  }
   applyFilter(assigneeFilterValue: string, statusFilterValue: boolean | null, descFilterValue: string) {
     const filters = {
       assignee: assigneeFilterValue.trim().toLowerCase(),
       status: statusFilterValue,
       description: descFilterValue.trim().toLowerCase()
     };
-
-    // Apply each filter independently
     this.dataSource.data = this.ticketslist.filter((ticketUser: TicketUser) => {
       const assigneeFiltering = ticketUser.user?.name?.toLowerCase() || '-';
       const statusFiltering = filters.status === null || ticketUser.completed === filters.status;
       const descFiltering = ticketUser.description?.toLowerCase().includes(filters.description) || filters.description === '';
 
-      // Combine the filters using OR logic
+      // Combine the filters 
       return (assigneeFiltering.includes(filters.assignee) || filters.assignee === '') && statusFiltering && descFiltering;
     });
 
-    if (this.dataSource.paginator) {
+    if (this.dataSource.paginator) { // 
       this.dataSource.paginator.firstPage();
     }
   }
+
+  /* DESCRIPTION FILTER */
   applyFilterDesc(filterValue: string) {
-    /*  this.dataSource.filterPredicate = (ticketUser: TicketUser, filter: string) => {
-        const desc = ticketUser.description?.toLowerCase(); // Vérifier si la description est défini pour éviter les erreurs si ce n'est pas le cas
-        return desc.includes(filter); // retourne vrai si la description contient le mot tapé false sinon
-      };
-      filterValue = filterValue.trim().toLowerCase();
-      this.dataSource.filter = filterValue;
-      if (this.dataSource.paginator) {
-        this.dataSource.paginator.firstPage();
-      }*/
     this.filterDesc = filterValue.toLowerCase();
     this.applyFilter(this.filterAssignee, this.statusFilter, this.filterDesc);
-
   }
+
+  /* USER FILTER */
   applyFilterUser(filterValue: string) {
     this.filterAssignee = filterValue;
     this.applyFilter(this.filterAssignee, this.statusFilter, this.filterDesc);
-
   }
 
+  /* STATUS FILTER */
   findCompleted(filterValue: boolean) {
     this.statusFilter = filterValue;
     this.applyFilter(this.filterAssignee, this.statusFilter, this.filterDesc);
-
   }
+
+  /* REINITIALIZE FILTER */
   reinitStatus() {
     this.statusFilter = null;
     this.applyFilter(this.filterAssignee, this.statusFilter, this.filterDesc);
   }
+
+  /* GET ALL TICKETS */
   getTickets() {
     this.dataready = false;
     this.ticketslist = [];
-    this.backendService.tickets().subscribe(tickets => { //récupère les tickets
-      if (tickets) {
-        const donnees = tickets.map(ticket => // va boucler chaque ticket
-          ticket.assigneeId !== null ? this.backendService.user(ticket.assigneeId) : of(null) // va rechercher l'utilisateur responsable du ticket et fa rassembler les observables dans une constante
-        );
-        forkJoin(donnees).subscribe((users: User[]) => {
-          users.forEach((user, index) => {
-            const ticket = tickets[index];
-            const ticketUser = new TicketUser(
-              ticket.id,
-              ticket.completed ? ticket.completed : false,
-              user as User | null,
-              ticket.description
-            );
-            console.log(ticketUser);
-            this.ticketslist.push(ticketUser);
-
-          });
-          this.dataready = true;
-          this.dataSource.data = this.ticketslist;
-          console.log(JSON.stringify(this.dataSource.data) + " DATA SourCE DATAAA");
-          this.dataSource.paginator = this.paginator;
-        });
-      }
-    });
-  }
-
-  getTickets1() {
-    this.dataready = false;
-    this.ticketslist = [];
-    this.backendService.tickets1().subscribe(tickets => { //récupère les tickets
-      if (tickets) {
-        const donnees = tickets.map(ticket => // va boucler chaque ticket
-          ticket.assigneeId !== null ? this.backendService.user(ticket.assigneeId) : of(null) // va rechercher l'utilisateur responsable du ticket et fa rassembler les observables dans une constante
-        );
-        forkJoin(donnees).subscribe((users: User[]) => {
-          users.forEach((user, index) => {
-            const ticket = tickets[index];
-            const ticketUser = new TicketUser(
-              ticket.id,
-              ticket.completed ? ticket.completed : false,
-              user as User | null,
-              ticket.description
-            );
-            console.log(ticketUser);
-            this.ticketslist.push(ticketUser);
-
-          });
-          this.dataready = true;
-          this.dataSource.data = this.ticketslist;
-          console.log(JSON.stringify(this.dataSource.data) + " DATA SourCE DATAAA");
-          this.dataSource.paginator = this.paginator;
-        });
-      }
-    });
-  }
-  getUserById(id: number): User {
-    let userFound;
-    this.backendService.user(id)
-      .subscribe(user => {
-        if (user) {
-          userFound = user;
-        }
+    this.backendService.tickets1().pipe(
+      catchError(error => {
+        console.error('Error fetching tickets:', error);
+        this.ticketNotFound = true;
+        return of(null);
       })
-    return userFound;
+    ).subscribe(tickets => { //récupère les tickets
+      if (tickets && tickets.length > 0) {
+        const donnees = tickets.map(ticket => // va boucler chaque ticket
+          ticket.assigneeId !== null ? this.backendService.user(ticket.assigneeId) : of(null) // va rechercher l'utilisateur responsable du ticket si il y en a et va rassembler les observables dans une constante
+        );
+        forkJoin(donnees).subscribe((users: User[]) => {
+          console.log(JSON.stringify(users) + " DONNEES");
+          users.forEach((user, index) => {
+            const ticket = tickets[index];
+            const ticketUser = new TicketUser(
+              ticket.id,
+              ticket.completed ? ticket.completed : false,
+              user as User | null,
+              ticket.description
+            );
+            console.log(ticketUser);
+            this.ticketslist.push(ticketUser);
+          });
+          this.dataready = true;
+          this.dataSource.data = this.ticketslist;
+          this.dataSource.paginator = this.paginator;
+        });
+      } else {
+        this.ticketNotFound = true;
+      }
+    });
   }
 
   openform(enterAnimationDuration: string, exitAnimationDuration: string): void {
@@ -196,10 +158,8 @@ export class TicketListComponent {
     });
 
     diag.afterClosed().subscribe(result => {
-      console.log(result);
       if (result.event) {
-        console.log(" NETY");
-        this.getTickets1();
+        this.getTickets();
       } else {
 
       }
