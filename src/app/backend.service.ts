@@ -50,7 +50,7 @@ export class BackendService {
         ];
 
     private findUserById = (id: number) => this.storedUsers.find((user: User) => user.id === +id);
-    private findTicketById = (id: number) => this.storedTickets
+    private findTicketById = (id: number)  => this.storedTickets
         .find((ticket: Ticket) => ticket.id === +id);
         
     private findTicketById1 = (id: number) => JSON.parse(localStorage.getItem(this.storagekey))
