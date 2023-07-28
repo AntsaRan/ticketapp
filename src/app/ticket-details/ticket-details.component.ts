@@ -1,20 +1,15 @@
-import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Ticket } from 'src/interfaces/ticket.interface';
-import { MatCardModule } from '@angular/material/card'
-import { catchError, filter, map, mergeMap, startWith, switchMap } from 'rxjs/operators';
-import { NgFor, AsyncPipe } from '@angular/common';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
-import { User } from 'src/interfaces/user.interface';
 import { BackendService } from '../backend.service';
-import { Observable } from 'rxjs/internal/Observable';
+import { catchError, map, startWith, switchMap } from 'rxjs/operators';
+import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { of, throwError } from 'rxjs';
+import { Observable } from 'rxjs/internal/Observable';
+import { Ticket } from 'src/interfaces/ticket.interface';
 import { TicketUser } from '../model/ticketUser';
-import { forkJoin, of, throwError } from 'rxjs';
+import { User } from 'src/interfaces/user.interface';
 import { UtilsService } from '../shared/utils.service';
+
 @Component({
   selector: 'app-ticket-details',
   templateUrl: './ticket-details.component.html',
@@ -80,13 +75,7 @@ export class TicketDetailsComponent {
         if (!ticketId) {
           return of(null);
         }
-        return this.backendService.ticket(ticketId).pipe(
-          catchError(error => {
-            this.utils.errorToast();
-            console.error('Error fetching ticket:', error);
-            return of(null);
-          })
-        );
+        return this.backendService.ticket(ticketId) ? this.backendService.ticket(ticketId) : of(null);
       }),
       switchMap(ticket => {
         if (!ticket) {
@@ -94,21 +83,10 @@ export class TicketDetailsComponent {
         }
         this.ticket = ticket;
         return this.backendService.user(ticket.assigneeId ? ticket.assigneeId : null).pipe(
-          catchError(error => {
-            this.utils.errorToast();
-            console.error('Error fetching user:', error);
-            return of(null);
-          }),
           switchMap(user => {
             this.user = user;
             this.ticketUSer = new TicketUser(this.ticket.id, this.ticket.completed, user, this.ticket.description);
-            return this.backendService.users().pipe(
-              catchError(error => {
-                this.utils.errorToast();
-                console.error('Error fetching users:', error);
-                return of([]);
-              })
-            )
+            return this.backendService.users()
           })
         );
       }),
@@ -116,34 +94,20 @@ export class TicketDetailsComponent {
         this.users = users;
       }), catchError(error => {
         this.utils.errorToast();
-        console.error('Error in getTicket:', error);
+        console.error('Error whil getting ticket:', error);
         return throwError(() => error);
       })
     );
   }
 
   completeTicket() {
-    this.backendService.complete1(this.ticket.id, true).pipe(
-      catchError(error => {
-        console.error('Error in completing ticket:', error);
-        this.utils.errorToast();
-        return throwError(() => error);
+    this.backendService.complete1(this.ticket.id, true)
+      .subscribe(ticketUpdated => {
+        if (ticketUpdated) {
+          this.getTicket().subscribe();
+        }
       })
-    ).subscribe(ticketUpdated => {
-      if (ticketUpdated) {
-        this.getTicket().pipe(
-          catchError(error => {
-            console.error('Error in getTicket:', error);
-            this.utils.errorToast();
-            return throwError(() => error);
-          })
-        ).subscribe(() => {
-
-        })
-      }
-    })
   }
-
   assign() {
     this.isLoadingAssign = true;
     if (this.selectedUser) {
