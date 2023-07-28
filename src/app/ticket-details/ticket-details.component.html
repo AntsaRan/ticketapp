@@ -6,7 +6,19 @@
     </div>
     <!-- search bar and add ticket button-->
     <div class="loaderspinner">
-        <mat-spinner [diameter]="70" *ngIf="!isDataLoaded"></mat-spinner>
+        <mat-spinner [diameter]="70" *ngIf="!isDataLoaded && !ticketNotFound"></mat-spinner>
+    </div>
+
+    <div class="row">
+        <div *ngIf="ticketNotFound" class="noTicket col-lg-6 col-md-6 col-sm-6">
+            <img src="assets/img/notfound.png">
+        </div>
+        <div *ngIf="ticketNotFound" class="noTicket col-lg-6 col-md-6 col-sm-6">
+            <p><b>No ticket found</b></p>
+            <button routerLink="" mat-fab extended color="primary">
+                Go back
+            </button>
+        </div>
     </div>
     <section *ngIf="isDataLoaded">
         <mat-card class="ticket-card">
@@ -18,7 +30,7 @@
 
                 <div class="detail-div formcontainer">
                     <p class="desc-container">
-                      {{ticket.description}}
+                        {{ticket.description}}
                     </p>
                 </div>
                 <div class="detail-div">
@@ -36,13 +48,17 @@
                                 <input class="custom-input-container" type="text" matInput [formControl]="assigneeCtrl"
                                     [matAutocomplete]="auto">
                                 <mat-label>Assignee</mat-label>
-                                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"  (optionSelected)="onOptionSelected($event.option.value)">
+                                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
+                                    (optionSelected)="onOptionSelected($event.option.value)">
                                     <mat-option *ngFor="let user of filterusers | async" [value]="user">
                                         {{user.name}}
                                     </mat-option>
                                 </mat-autocomplete>
                             </mat-form-field>
-                            <button *ngIf="!ticket.assigneeId" mat-fab extended color="primary" (click)="assign()">
+                            <div class="loaderspinner">
+                                <mat-spinner [diameter]="70" *ngIf="isLoadingAssign"></mat-spinner>
+                            </div>
+                            <button *ngIf="!ticket.assigneeId" [disabled]="!selectedUser" mat-fab extended color="primary" (click)="assign()">
                                 Assign
                             </button>
                         </div>
@@ -50,18 +66,12 @@
                         <div class="formcontent">
                             <p class="detail-div"><b>Status</b></p>
                             <mat-divider></mat-divider>
-
                             <p class="detail-div" *ngIf="ticket.completed" class="statusCompleted"><b>Complete</b></p>
                             <p class="detail-div" *ngIf="!ticket.completed" class="statusNotCompleted"><b>Undone</b></p>
                             <button *ngIf="!ticket.completed" [disabled]="!ticket.assigneeId" mat-fab extended
                                 class="successbtn" (click)="completeTicket()">
                                 <mat-icon>checked</mat-icon>
                                 Complete
-                            </button>
-                            <button *ngIf="ticket.completed" [disabled]="!ticket.assigneeId" mat-fab extended
-                                class="undobtn" (click)="uncompleteTicket()">
-                                <mat-icon>checked</mat-icon>
-                                Undo
                             </button>
                         </div>
                     </form>
