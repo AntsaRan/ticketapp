@@ -7,12 +7,14 @@ import { NgFor, AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
 import { User } from 'src/interfaces/user.interface';
 import { BackendService } from '../backend.service';
 import { Observable } from 'rxjs/internal/Observable';
 import { FormControl } from '@angular/forms';
 import { TicketUser } from '../model/ticketUser';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, of, throwError } from 'rxjs';
+import { UtilsService } from '../shared/utils.service';
 @Component({
   selector: 'app-ticket-details',
   templateUrl: './ticket-details.component.html',
@@ -31,13 +33,18 @@ export class TicketDetailsComponent {
   selectedUser: User;
   isLoadingAssign = false;
   ticketNotFound = false;
+  errorInModif = false;
+
+
   private _filter(name: string): User[] {
     const filterValue = name.toLowerCase();
 
     return this.users.filter(option => option.name.toLowerCase().includes(filterValue));
   }
 
-  constructor(private route: ActivatedRoute, private backendService: BackendService) {
+  constructor(private route: ActivatedRoute,
+    private backendService: BackendService,
+    private utils: UtilsService) {
     this.route.params.subscribe(params => {
       if (params) {
         console.log(params);
@@ -45,12 +52,13 @@ export class TicketDetailsComponent {
       }
     });
   }
+
   ngOnInit() {
     this.getTicket().subscribe(() => {
       if (!this.ticket) {
         this.ticketNotFound = true;
       } else {
-        this.assigneeCtrl.setValue(this.user); // Set the initial value of the assigneeCtrl to the user object
+        this.assigneeCtrl.setValue(this.user);
         this.filterusers = this.assigneeCtrl.valueChanges.pipe(
           startWith(''),
           map(value => {
@@ -72,7 +80,13 @@ export class TicketDetailsComponent {
         if (!ticketId) {
           return of(null);
         }
-        return this.backendService.ticket(ticketId) ? this.backendService.ticket(ticketId) : of(null);
+        return this.backendService.ticket(ticketId).pipe(
+          catchError(error => {
+            this.utils.errorToast();
+            console.error('Error fetching ticket:', error);
+            return of(null);
+          })
+        );
       }),
       switchMap(ticket => {
         if (!ticket) {
@@ -80,44 +94,75 @@ export class TicketDetailsComponent {
         }
         this.ticket = ticket;
         return this.backendService.user(ticket.assigneeId ? ticket.assigneeId : null).pipe(
+          catchError(error => {
+            this.utils.errorToast();
+            console.error('Error fetching user:', error);
+            return of(null);
+          }),
           switchMap(user => {
             this.user = user;
             this.ticketUSer = new TicketUser(this.ticket.id, this.ticket.completed, user, this.ticket.description);
-            return this.backendService.users();
+            return this.backendService.users().pipe(
+              catchError(error => {
+                this.utils.errorToast();
+                console.error('Error fetching users:', error);
+                return of([]);
+              })
+            )
           })
         );
-      }),// Provide a default value (empty array) if no values are emitted
+      }),
       map(users => {
         this.users = users;
+      }), catchError(error => {
+        this.utils.errorToast();
+        console.error('Error in getTicket:', error);
+        return throwError(() => error);
       })
     );
   }
 
   completeTicket() {
-    this.backendService.complete1(this.ticket.id, true).subscribe(ticketUpdated => {
+    this.backendService.complete1(this.ticket.id, true).pipe(
+      catchError(error => {
+        console.error('Error in completing ticket:', error);
+        this.utils.errorToast();
+        return throwError(() => error);
+      })
+    ).subscribe(ticketUpdated => {
       if (ticketUpdated) {
-        console.log(JSON.stringify(ticketUpdated) + "complete");
-        this.getTicket().subscribe(() => {
+        this.getTicket().pipe(
+          catchError(error => {
+            console.error('Error in getTicket:', error);
+            this.utils.errorToast();
+            return throwError(() => error);
+          })
+        ).subscribe(() => {
+
         })
       }
     })
   }
-  uncompleteTicket() {
 
-  }
   assign() {
     this.isLoadingAssign = true;
     if (this.selectedUser) {
-      this.backendService.assign1(this.ticket.id, this.selectedUser.id).subscribe(ticketUpdated => {
-        if (ticketUpdated) {
-          this.isLoadingAssign = false;
-          this.ticket = ticketUpdated;
-          this.getTicket().subscribe(() => {
-            this.selectedUser = null;
-          });
-        }
-
-      });
+      this.backendService.assign1(this.ticket.id, this.selectedUser.id)
+        .pipe(
+          catchError(error => {
+            console.error('Error in assigning ticket:', error);
+            this.utils.errorToast();
+            return throwError(() => error);
+          })
+        ).subscribe(ticketUpdated => {
+          if (ticketUpdated) {
+            this.isLoadingAssign = false;
+            this.ticket = ticketUpdated;
+            this.getTicket().subscribe(() => {
+              this.selectedUser = null;
+            });
+          }
+        });
     }
   }
   onOptionSelected(user: any) {
