@@ -136,7 +136,7 @@ export class TicketListComponent {
     ).subscribe(tickets => { //récupère les tickets
       if (tickets && tickets.length > 0) {
         const donnees = tickets.map(ticket => // va boucler chaque ticket
-          ticket.assigneeId !== null ? this.backendService.user(ticket.assigneeId) : of(null) // va rechercher l'utilisateur responsable du ticket si il y en a et va rassembler les observables dans une constante
+          ticket.assigneeId !== null ? this.backendService.user(ticket.assigneeId) : of(null) 
         );
         forkJoin(donnees).pipe(
           catchError(error => {

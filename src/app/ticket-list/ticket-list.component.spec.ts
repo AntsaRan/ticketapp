@@ -83,7 +83,6 @@ describe('TicketListComponent', () => {
 
     backendServiceSpy.tickets1.and.returnValue(of(ticketsMock));
     backendServiceSpy.user.and.callFake((userId: number) => {
-      // Implement the fake user method to return mock users based on userId
       return of(usersMock.find((user) => user.id === userId) || null);
     });
 
@@ -109,7 +108,6 @@ describe('TicketListComponent', () => {
       return new TicketUser(ticket.id, ticket.completed, user, ticket.description);
     });
 
-    // Now, we expect the ticketslist in the component to match our expectedTickets
     expect(component.ticketslist).toEqual(expectedTickets);
   });
 

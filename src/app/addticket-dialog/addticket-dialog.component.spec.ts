@@ -96,14 +96,11 @@ describe('AddticketDialogComponent', () => {
     const description = 'New ticket';
     component.descriptionTicket = description;
     component.add_ticket();
-    // Check that the backendService.newTicket1() method was called with the correct ticket object
 
     expect(backendServiceSpy.newTicket1).toHaveBeenCalledWith({ description });
 
-    // Check that the inprogress property is set to false after the ticket is added
     expect(component.inprogress).toBe(false);
 
-    // Check that the ticketIsAdded property is set to true after the ticket is added
     expect(component.ticketIsAdded).toBe(true);
  
     expect(component.newticket).toEqual(newticket);
