@@ -29,7 +29,7 @@ export class TicketDetailsComponent {
   isLoadingAssign = false;
   ticketNotFound = false;
   errorInModif = false;
-
+  selectedUserInput: string;
 
   private _filter(name: string): User[] {
     const filterValue = name.toLowerCase();
@@ -130,7 +130,11 @@ export class TicketDetailsComponent {
     }
   }
   onOptionSelected(user: any) {
-    console.log('Selected User:', JSON.stringify(user));
     this.selectedUser = user;
+  }
+  onInputChanged(){
+    if (!this.selectedUserInput) {
+      this.selectedUser = null;
+    }
   }
 }
