@@ -123,7 +123,6 @@ export class TicketListComponent {
   /* GET ALL TICKETS */
   getTickets() {
     this.dataready = false;
-    this.ticketslist = [];
     this.ticketNotFound = false;
 
     this.backendService.tickets1().pipe(
@@ -157,10 +156,7 @@ export class TicketListComponent {
     });
   }
   mapUsersTicket(users: User[], tickets: Ticket[]) {
-    console.log("MAPUSER");
-    console.log("users "+ JSON.stringify(users));
-    console.log("tickets "+ JSON.stringify(tickets));
-
+    this.ticketslist = [];
     users.forEach((user, index) => {
       const ticket = tickets[index];
       const ticketUser = new TicketUser(
@@ -169,7 +165,6 @@ export class TicketListComponent {
         user as User | null,
         ticket.description
       );
-      console.log(ticketUser);
       this.ticketslist.push(ticketUser);
     });
     this.dataready = true;

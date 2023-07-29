@@ -119,6 +119,10 @@ div.hidden {
 .ticketsRow{
     margin-bottom: 40px;
 }
+.mat-toolbar {
+    background: none !important;
+    color: rgba(0, 0, 0, .87);
+}
 
 /* MEDIA QUERIES */
 /* For small phone screens up to 767 pixels wide */
@@ -176,7 +180,3 @@ div.hidden {
 
 }
 
-.mat-toolbar {
-    background: none !important;
-    color: rgba(0, 0, 0, .87);
-}
