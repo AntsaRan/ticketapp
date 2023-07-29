@@ -46,19 +46,20 @@
                         <div class="formcontent">
                             <mat-form-field *ngIf="!user" class="autocompleteField">
                                 <input class="custom-input-container" type="text" matInput [formControl]="assigneeCtrl"
-                                    [matAutocomplete]="auto">
+                                    [matAutocomplete]="auto" (input)="onInputChanged()" [(ngModel)]="selectedUserInput">
                                 <mat-label>Assignee</mat-label>
                                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
                                     (optionSelected)="onOptionSelected($event.option.value)">
-                                    <mat-option *ngFor="let user of filterusers | async" [value]="user">
-                                        {{user.name}}
-                                    </mat-option>
+                                <mat-option *ngFor="let user of filterusers | async" [value]="user">
+                                    {{user.name}}
+                                </mat-option>
                                 </mat-autocomplete>
                             </mat-form-field>
                             <div class="loaderspinner">
                                 <mat-spinner [diameter]="70" *ngIf="isLoadingAssign"></mat-spinner>
                             </div>
-                            <button *ngIf="!ticket.assigneeId" [disabled]="!selectedUser" mat-fab extended color="primary" (click)="assign()">
+                            <button *ngIf="!ticket.assigneeId" [disabled]="!selectedUser" mat-fab extended
+                                color="primary" (click)="assign()">
                                 Assign
                             </button>
                         </div>
