@@ -27,7 +27,7 @@ export class BackendService {
         {
             id: 1,
             completed: true,
-            assigneeId: 111,
+            assigneeId: 112,
             description: 'Move the desk to the new location'
         }
     ];
@@ -70,6 +70,7 @@ export class BackendService {
     }
 
     public user(id: number): Observable<User> {
+        console.log("USER FuNC");
         return of(this.findUserById(id)).pipe(delay(randomDelay()));
     }
 

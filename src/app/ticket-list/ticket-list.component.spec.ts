@@ -50,7 +50,7 @@ describe('TicketListComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [TicketListComponent],
       providers: [
-        { provide: BackendService, useValue: backendServiceSpyObj },MatSnackBar
+        { provide: BackendService, useValue: backendServiceSpyObj }, MatSnackBar
       ],
       imports: [
         BrowserModule,
@@ -72,8 +72,8 @@ describe('TicketListComponent', () => {
         MatProgressBarModule,
         MatPaginatorModule,
         MatAutocompleteModule,
-        MatCardModule,RouterModule
-    ],
+        MatCardModule, RouterModule
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TicketListComponent);
@@ -98,25 +98,19 @@ describe('TicketListComponent', () => {
     expect(component).toBeTruthy();
   });
 
+
   it('should fetch tickets on initialization', () => {
+    
     expect(backendServiceSpy.tickets1).toHaveBeenCalled();
-  });
-
-  it('should map users to tickets correctly', () => {
-    fixture.detectChanges(); // Trigger component initialization
-
-    expect(backendServiceSpy.tickets1).toHaveBeenCalled();
-    expect(backendServiceSpy.user.calls.count()).toBe(ticketsMock.length);
+    expect(backendServiceSpy.user.calls.count()).toBe(usersMock.length);
 
     const expectedTickets: TicketUser[] = ticketsMock.map((ticket) => {
       const user = usersMock.find((u) => u.id === ticket.assigneeId) || null;
       return new TicketUser(ticket.id, ticket.completed, user, ticket.description);
     });
 
-    // Call the mapUsersTicket method with our mock users and tickets
-    component.mapUsersTicket(usersMock, ticketsMock);
-
     // Now, we expect the ticketslist in the component to match our expectedTickets
     expect(component.ticketslist).toEqual(expectedTickets);
   });
+
 });

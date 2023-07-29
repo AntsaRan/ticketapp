@@ -49,7 +49,7 @@ export class TicketListComponent {
 
   //DETAILS
   ticketID: number | null = null;
-  
+
   private destroy$ = new Subject<boolean>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -60,7 +60,7 @@ export class TicketListComponent {
     private router: Router,
     private dialog: MatDialog,
     private utils: UtilsService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getTickets();
@@ -87,7 +87,7 @@ export class TicketListComponent {
       const statusFiltering = filters.status === null || ticketUser.completed === filters.status;
       const descFiltering = ticketUser.description?.toLowerCase().includes(filters.description) || filters.description === '';
 
-  // Combine the filters 
+      // Combine the filters 
       return (assigneeFiltering.includes(filters.assignee) || filters.assignee === '') && statusFiltering && descFiltering;
     });
 
@@ -132,7 +132,7 @@ export class TicketListComponent {
         console.error('Error fetching tickets:', error);
         this.ticketNotFound = true;
         this.utils.errorToast();
-        return throwError(()=>error);
+        return throwError(() => error);
       })
     ).subscribe(tickets => { //récupère les tickets
       if (tickets && tickets.length > 0) {
@@ -144,20 +144,23 @@ export class TicketListComponent {
             console.error('Error fetching tickets and users:', error);
             this.ticketNotFound = true;
             this.utils.errorToast();
-            return throwError(()=>error);
+            return throwError(() => error);
           })
         ).subscribe((users: User[]) => {
-          this.mapUsersTicket(users,tickets);
-          this.dataready = true;
-          this.dataSource.data = this.ticketslist;
-          this.dataSource.paginator = this.paginator;
+          if(users){
+            this.mapUsersTicket(users, tickets);
+          }
         });
       } else {
         this.ticketNotFound = true;
       }
     });
   }
-  mapUsersTicket(users: User[],tickets: Ticket[]){
+  mapUsersTicket(users: User[], tickets: Ticket[]) {
+    console.log("MAPUSER");
+    console.log("users "+ JSON.stringify(users));
+    console.log("tickets "+ JSON.stringify(tickets));
+
     users.forEach((user, index) => {
       const ticket = tickets[index];
       const ticketUser = new TicketUser(
@@ -169,6 +172,9 @@ export class TicketListComponent {
       console.log(ticketUser);
       this.ticketslist.push(ticketUser);
     });
+    this.dataready = true;
+    this.dataSource.data = this.ticketslist;
+    this.dataSource.paginator = this.paginator;
   }
   openform(enterAnimationDuration: string, exitAnimationDuration: string): void {
     const diag = this.dialog.open(AddticketDialogComponent, {
