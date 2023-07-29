@@ -120,10 +120,10 @@ export class TicketDetailsComponent {
           })
         ).subscribe(ticketUpdated => {
           if (ticketUpdated) {
-            this.isLoadingAssign = false;
             this.ticket = ticketUpdated;
             this.getTicket().subscribe(() => {
               this.selectedUser = null;
+              this.isLoadingAssign = false;
             });
           }
         });

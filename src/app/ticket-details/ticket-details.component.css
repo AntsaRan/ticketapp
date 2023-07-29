@@ -38,3 +38,9 @@
     background: none !important;
     color: rgba(0, 0, 0, .87);
 }
+.backBtn{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 5%;
+}

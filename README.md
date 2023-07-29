@@ -1,27 +1,23 @@
-# Ticketapp
+Coding Assignment
+The goal of this assignment is to showcase your ability to develop features and your coding style. Due to the time constraint you will have to prioritize what you work on, and have to try to balance cleanliness with just getting it done.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.1.5.
+Even though the app is small, one can easily spend the whole week working on it: perfecting styles, testing every single method, or carefully crafting every single line of code.
 
-## Development server
+The most important part of the interview will come after this one, when we look at the app together, talk about the decisions you have made, etc...
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Ticketing Managing Application
+Build a ticket managing app, where the user can add, filter, assign, and complete tickets.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+The app should have two screens: the list screen, and the details screen. Please use the Angular router to manage the transitions between them.
+Even though we tend to use NgRx for state management, you can use a different approach if you think it fits better.
+Write a couple of tests. The goal here is not to build a production-quality app, so don't test every single detail. Two or three tests should be good enough.
+Don't forget about error handling and race conditions. The API server has a random delay. If you bump it up to say 10 seconds, would the app still work correctly?
+Good To Know
+Application must have automated tests (type and completeness of the tests are up to you).
+Application should be optimized for performance.
+(Optional) You can use whatever design library you want, if you even want one (PrimeNg, MaterialDesign, DevExpress...).
+(Optional) Application should be split in domain libraries.
+(Optional) Application should have a good User Experience.
+(Optional) Use updates Packages.
+Submitting your solution
+Please send us the link to your publicly hosted git repository. We will continue to work on it during the pair-programming sessions. Please also indicate approximately how long you spent on the submission.
