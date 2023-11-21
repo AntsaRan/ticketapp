@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { BackendService } from '../backend.service';
+import { BackendService } from '../../backend.service';
 import { Ticket } from 'src/interfaces/ticket.interface';
 import { MatDialogRef } from '@angular/material/dialog';
 import { catchError, of } from 'rxjs';
@@ -20,6 +20,7 @@ export class AddticketDialogComponent {
   inprogress = false;
   isFormValid = false;
   newticket : Ticket = null;
+  
   constructor(private backendService: BackendService, private dialogRef: MatDialogRef<AddticketDialogComponent>
   ) {
 
@@ -33,7 +34,7 @@ export class AddticketDialogComponent {
       };
       this.backendService.newTicket1(ticket).pipe(
         catchError(error => {
-          console.error('Error fetching tickets:', error);
+          console.error('Error adding ticket:', error);
           this.errorinsert = true;
           return of(null);
         })

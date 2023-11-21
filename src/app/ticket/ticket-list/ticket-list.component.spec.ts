@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { AddticketDialogComponent } from './addticket-dialog.component';
+import { TicketListComponent } from './ticket-list.component';
+import { BackendService } from '../../backend.service';
 import { of } from 'rxjs';
 import { User } from 'src/interfaces/user.interface';
 import { Ticket } from 'src/interfaces/ticket.interface';
-import { TicketUser } from '../model/ticketUser';
+import { TicketUser } from '../../data-access/model/ticketUser';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -26,12 +26,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
-import { BackendService } from '../backend.service';
-import { MatDialogRef } from '@angular/material/dialog';
 
-describe('AddticketDialogComponent', () => {
-  let component: AddticketDialogComponent;
-  let fixture: ComponentFixture<AddticketDialogComponent>;
+describe('TicketListComponent', () => {
+  let component: TicketListComponent;
+  let fixture: ComponentFixture<TicketListComponent>;
   let backendServiceSpy: jasmine.SpyObj<BackendService>; // Spy on BackendService
 
   const ticketsMock: Ticket[] = [
@@ -45,16 +43,14 @@ describe('AddticketDialogComponent', () => {
     { id: 101, name: 'Antsa Ranarivelo' },
     { id: 102, name: 'Maharo Rivomahefa' },
   ];
-  const newticket: Ticket = { id: 3, completed: false, assigneeId: null, description: 'New ticket' };
 
-  beforeEach(async() => {
-    const backendServiceSpyObj = jasmine.createSpyObj('BackendService', ['newTicket1']); // Provide method names in an array
+  beforeEach(async () => {
+    const backendServiceSpyObj = jasmine.createSpyObj('BackendService', ['tickets1', 'user']);
 
     await TestBed.configureTestingModule({
-      declarations: [AddticketDialogComponent],
+      declarations: [TicketListComponent],
       providers: [
-        { provide: BackendService, useValue: backendServiceSpyObj }, MatSnackBar,      
-        { provide: MatDialogRef, useValue: {} },
+        { provide: BackendService, useValue: backendServiceSpyObj }, MatSnackBar
       ],
       imports: [
         BrowserModule,
@@ -79,31 +75,37 @@ describe('AddticketDialogComponent', () => {
         MatCardModule, RouterModule
       ],
     }).compileComponents();
-    fixture = TestBed.createComponent(AddticketDialogComponent);
+
+    fixture = TestBed.createComponent(TicketListComponent);
     component = fixture.componentInstance;
     backendServiceSpy = TestBed.inject(BackendService) as jasmine.SpyObj<BackendService>;
+    backendServiceSpy.tickets1.and.returnValue(of(ticketsMock));
+    backendServiceSpy.user.and.callFake((userId: number) => {
+      return of(usersMock.find((user) => user.id === userId) || null);
+    });
 
-    backendServiceSpy.newTicket1.and.returnValue(of(newticket));
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    fixture.destroy();
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should add a ticket', () => {
-    const description = 'New ticket';
-    component.descriptionTicket = description;
-    component.add_ticket();
 
-    expect(backendServiceSpy.newTicket1).toHaveBeenCalledWith({ description });
+  it('should fetch tickets on initialization', () => {
+    expect(backendServiceSpy.tickets1).toHaveBeenCalled();
+    expect(backendServiceSpy.user.calls.count()).toBe(usersMock.length);
 
-    expect(component.inprogress).toBe(false);
+    const expectedTickets: TicketUser[] = ticketsMock.map((ticket) => {
+      const user = usersMock.find((u) => u.id === ticket.assigneeId) || null;
+      return new TicketUser(ticket.id, ticket.completed, user, ticket.description);
+    });
 
-    expect(component.ticketIsAdded).toBe(true);
- 
-    expect(component.newticket).toEqual(newticket);
+    expect(component.ticketslist).toEqual(expectedTickets);
   });
 
 });

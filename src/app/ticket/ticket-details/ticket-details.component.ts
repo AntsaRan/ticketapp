@@ -1,14 +1,14 @@
 import { ActivatedRoute } from '@angular/router';
-import { BackendService } from '../backend.service';
+import { BackendService } from '../../backend.service';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { of, throwError } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
 import { Ticket } from 'src/interfaces/ticket.interface';
-import { TicketUser } from '../model/ticketUser';
+import { TicketUser } from '../../data-access/model/ticketUser';
 import { User } from 'src/interfaces/user.interface';
-import { UtilsService } from '../shared/utils.service';
+import { UtilsService } from '../../shared/utils.service';
 
 @Component({
   selector: 'app-ticket-details',
@@ -53,9 +53,10 @@ export class TicketDetailsComponent {
       if (!this.ticket) {
         this.ticketNotFound = true;
       } else {
+        console.log(this.user.name)
         this.assigneeCtrl.setValue(this.user);
         this.filterusers = this.assigneeCtrl.valueChanges.pipe(
-          startWith(''),
+          startWith(this.user ? this.user : ''),
           map(value => {
             const name = typeof value === 'string' ? value : value?.name;
             return name ? this._filter(name as string) : this.users.slice();
@@ -130,11 +131,11 @@ export class TicketDetailsComponent {
     }
   }
   onOptionSelected(user: any) {
-    this.selectedUser = user;
+    this.assigneeCtrl.setValue(user);
   }
-  onInputChanged(){
-    if (!this.selectedUserInput) {
-      this.selectedUser = null;
+  onInputChanged() {
+    if (!this.assigneeCtrl.value) {
+      this.assigneeCtrl.setValue(null); // Clear the FormControl value
     }
   }
 }

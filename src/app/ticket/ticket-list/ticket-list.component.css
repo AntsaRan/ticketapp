@@ -53,35 +53,11 @@
     width: 200px;
 }
 
-.filter-container {
-    display: flex;
-    margin-top: 45px;
-    padding: 0 16px;
-}
-
-.filter_text {
-    margin-left: 15px;
-    cursor: pointer;
-}
-
-.filters-content {
-    margin-top: 25px;
-
-}
-
 .inputs-container mat-form-field+mat-form-field {
     margin-top: 15px;
     margin-left: 8px;
 }
 
-.filterfield {
-    margin-left: 15px !important;
-
-}
-
-div.hidden {
-    display: none;
-}
 
 
 .spinner {

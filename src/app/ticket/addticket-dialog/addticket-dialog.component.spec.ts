@@ -1,35 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TicketListComponent } from './ticket-list.component';
-import { BackendService } from '../backend.service';
+
+import { AddticketDialogComponent } from './addticket-dialog.component';
 import { of } from 'rxjs';
 import { User } from 'src/interfaces/user.interface';
 import { Ticket } from 'src/interfaces/ticket.interface';
-import { TicketUser } from '../model/ticketUser';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatTableModule } from '@angular/material/table';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
+import { BackendService } from '../../backend.service';
+import { MatDialogRef } from '@angular/material/dialog';
 
-describe('TicketListComponent', () => {
-  let component: TicketListComponent;
-  let fixture: ComponentFixture<TicketListComponent>;
+describe('AddticketDialogComponent', () => {
+  let component: AddticketDialogComponent;
+  let fixture: ComponentFixture<AddticketDialogComponent>;
   let backendServiceSpy: jasmine.SpyObj<BackendService>; // Spy on BackendService
 
   const ticketsMock: Ticket[] = [
@@ -43,14 +37,16 @@ describe('TicketListComponent', () => {
     { id: 101, name: 'Antsa Ranarivelo' },
     { id: 102, name: 'Maharo Rivomahefa' },
   ];
+  const newticket: Ticket = { id: 3, completed: false, assigneeId: null, description: 'New ticket' };
 
-  beforeEach(async () => {
-    const backendServiceSpyObj = jasmine.createSpyObj('BackendService', ['tickets1', 'user']);
+  beforeEach(async() => {
+    const backendServiceSpyObj = jasmine.createSpyObj('BackendService', ['newTicket1']); // Provide method names in an array
 
     await TestBed.configureTestingModule({
-      declarations: [TicketListComponent],
+      declarations: [AddticketDialogComponent],
       providers: [
-        { provide: BackendService, useValue: backendServiceSpyObj }, MatSnackBar
+        { provide: BackendService, useValue: backendServiceSpyObj }, MatSnackBar,      
+        { provide: MatDialogRef, useValue: {} },
       ],
       imports: [
         BrowserModule,
@@ -58,57 +54,42 @@ describe('TicketListComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         MatButtonModule,
-        MatCheckboxModule,
         MatSidenavModule,
         MatToolbarModule,
         MatIconModule,
-        MatDividerModule,
-        MatSelectModule,
+
         MatInputModule,
         MatFormFieldModule,
-        MatTableModule,
-        MatProgressSpinnerModule,
         MatDialogModule,
         MatProgressBarModule,
         MatPaginatorModule,
-        MatAutocompleteModule,
-        MatCardModule, RouterModule
+       RouterModule
       ],
     }).compileComponents();
-
-    fixture = TestBed.createComponent(TicketListComponent);
+    fixture = TestBed.createComponent(AddticketDialogComponent);
     component = fixture.componentInstance;
-
     backendServiceSpy = TestBed.inject(BackendService) as jasmine.SpyObj<BackendService>;
-
-    backendServiceSpy.tickets1.and.returnValue(of(ticketsMock));
-    backendServiceSpy.user.and.callFake((userId: number) => {
-      return of(usersMock.find((user) => user.id === userId) || null);
-    });
-
+    backendServiceSpy.newTicket1.and.returnValue(of(newticket));
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    fixture.destroy();
-  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should add a ticket', () => {
+    const description = 'New ticket';
+    component.descriptionTicket = description;
+    component.add_ticket();
 
-  it('should fetch tickets on initialization', () => {
-    
-    expect(backendServiceSpy.tickets1).toHaveBeenCalled();
-    expect(backendServiceSpy.user.calls.count()).toBe(usersMock.length);
+    expect(backendServiceSpy.newTicket1).toHaveBeenCalledWith({ description });
 
-    const expectedTickets: TicketUser[] = ticketsMock.map((ticket) => {
-      const user = usersMock.find((u) => u.id === ticket.assigneeId) || null;
-      return new TicketUser(ticket.id, ticket.completed, user, ticket.description);
-    });
+    expect(component.inprogress).toBe(false);
 
-    expect(component.ticketslist).toEqual(expectedTickets);
+    expect(component.ticketIsAdded).toBe(true);
+ 
+    expect(component.newticket).toEqual(newticket);
   });
 
 });

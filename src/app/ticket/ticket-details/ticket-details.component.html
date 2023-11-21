@@ -27,7 +27,6 @@
                     <b>Description</b>
                 </div>
                 <mat-divider></mat-divider>
-
                 <div class="detail-div formcontainer">
                     <p class="desc-container">
                         {{ticket.description}}
@@ -36,17 +35,14 @@
                 <div class="detail-div">
                     <form class="formcontainer">
                         <div class="formcontent">
-                            <!-- si il y a un assignee -->
                             <p class="detail-div"><b>Assignee</b></p>
                             <mat-divider></mat-divider>
-
-                            <p *ngIf="user">{{user.name}}</p>
-                            <!-- si il n'y a pas un assignee -->
+                          <!-- <p *ngIf="user">{{user.name}}</p>--> 
                         </div>
                         <div class="formcontent">
-                            <mat-form-field *ngIf="!user" class="autocompleteField">
+                            <mat-form-field class="autocompleteField">
                                 <input class="custom-input-container" type="text" matInput [formControl]="assigneeCtrl"
-                                    [matAutocomplete]="auto" (input)="onInputChanged()" [(ngModel)]="selectedUserInput">
+                                    [matAutocomplete]="auto" (input)="onInputChanged()">
                                 <mat-label>Assignee</mat-label>
                                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
                                     (optionSelected)="onOptionSelected($event.option.value)">
@@ -58,7 +54,7 @@
                             <div class="loaderspinner">
                                 <mat-spinner [diameter]="70" *ngIf="isLoadingAssign"></mat-spinner>
                             </div>
-                            <button *ngIf="!ticket.assigneeId" [disabled]="!selectedUser" mat-fab extended
+                            <button [disabled]="!selectedUser" mat-fab extended
                                 color="primary" (click)="assign()">
                                 Assign
                             </button>

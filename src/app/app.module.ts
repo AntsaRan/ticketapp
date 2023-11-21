@@ -1,69 +1,42 @@
 import { AppComponent } from './app.component';
-import { AddticketDialogComponent } from './addticket-dialog/addticket-dialog.component';
 import { BackendService } from './backend.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { Routes, RouterModule, Router } from '@angular/router';
-import { TicketDetailsComponent } from './ticket-details/ticket-details.component';
-import { TicketListComponent } from './ticket-list/ticket-list.component';
+import { NgModule, isDevMode } from '@angular/core';
+import { TicketListModule } from './ticket/ticket-list/ticket-list.module';
 import { UtilsService } from './shared/utils.service';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { AppRoutingModule } from './app.routing';
+import { TicketDetailsModule } from './ticket/ticket-details/ticket-details.module';
+import { MatIconModule } from '@angular/material/icon';
+import { AddTicketModule } from './ticket/addticket-dialog/addticket.module';
+import { MatButtonModule } from '@angular/material/button';
+import { StoreModule } from '@ngrx/store';
+import { metaReducers, ticketReducer } from './data-access/state/ticket.reducer';
+import { StoreDevtools, StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
+import { TickeEffect } from './data-access/state/ticket.effects';
+import { ROOT_FEATURE_KEY } from './data-access/state/ticket.state';
 
-const routes: Routes = [
-    {
-        path: "",component: TicketListComponent
-    },
-    {
-        path: "ticketDetail/:id",component: TicketDetailsComponent
-    },
-    {
-        path: "**",component: PageNotFoundComponent
-    }
-]
 @NgModule({
-    declarations: [AppComponent, TicketDetailsComponent, TicketListComponent, AddticketDialogComponent],
+    declarations: [AppComponent],
     imports: [
+        AppRoutingModule,
         BrowserModule,
         BrowserAnimationsModule,
-        FormsModule,
-        ReactiveFormsModule,
-        RouterModule.forRoot(routes),
-        MatButtonModule,
-        MatCheckboxModule,
+        MatCheckboxModule,MatIconModule,
         MatSidenavModule,
         MatToolbarModule,
-        MatIconModule,
-        MatDividerModule,
-        MatSelectModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatTableModule,
-        MatProgressSpinnerModule,
-        MatDialogModule,
-        MatProgressBarModule,
-        MatPaginatorModule,
-        MatAutocompleteModule,
-        MatCardModule
+        TicketListModule,
+        TicketDetailsModule,
+        AddTicketModule,
+        MatButtonModule,
+        StoreModule.forRoot({[ROOT_FEATURE_KEY]: ticketReducer},{metaReducers: metaReducers}),
+        StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode()}),
+        EffectsModule.forRoot([TickeEffect]),
     ],
 
     providers: [BackendService,UtilsService,MatSnackBar],

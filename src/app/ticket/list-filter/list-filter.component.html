@@ -1,0 +1,25 @@
+<div class="filter-container">
+    <mat-icon aria-hidden="false" fontIcon="tune"></mat-icon>
+    <span class="filter_text" (click)="togglefilter()"> Filter</span>
+</div>
+<div class="filters-content">
+    <div [@fadeInOut]="isDivHidden ? 'out' : 'in'" [ngClass]="{'hidden': isDivHidden}">
+        <form>
+            <div class="inputs-container">
+                <mat-form-field class="filterfield">
+                    <mat-label>Assignee</mat-label>
+                    <input (keyup)="applyFilterUser($event.target.value)" matInput #input placeholder="Ex. Victor">
+                </mat-form-field>
+
+                <mat-form-field class="filterfield">
+                    <mat-label>Status</mat-label>
+                    <mat-select>
+                        <mat-option (click)="findCompleted(true)" value="true">Completed</mat-option>
+                        <mat-option (click)="findCompleted(false)" value="false">Undone</mat-option>
+                        <mat-option (click)="reinitStatus()" value="-">-</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </form>
+    </div>
+</div>

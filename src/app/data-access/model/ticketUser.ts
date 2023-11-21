@@ -1,5 +1,5 @@
-import { Ticket } from "../../interfaces/ticket.interface"
-import { User } from "../../interfaces/user.interface"
+import { Ticket } from "../../../interfaces/ticket.interface"
+import { User } from "../../../interfaces/user.interface"
 
 export class TicketUser{
     id: number;
@@ -14,4 +14,5 @@ export class TicketUser{
         this.completed = completed;
         this.description = description;
     }
+
 }

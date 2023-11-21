@@ -29,19 +29,33 @@ export class BackendService {
             completed: true,
             assigneeId: 112,
             description: 'Move the desk to the new location'
+        },
+        {
+            id: 3,
+            completed: true,
+            assigneeId: 111,
+            description: 'Move the desk3333 to the new location'
+        },
+        {
+            id: 4,
+            completed: true,
+            assigneeId: 111,
+            description: 'Move the desk222 to the new location'
+        },
+        {
+            id: 5,
+            completed: true,
+            assigneeId: 111,
+            description: 'Move the desk3333 to the new location'
+        },
+        {
+            id: 6,
+            completed: true,
+            assigneeId: 111,
+            description: 'Move the desk222 to the new location'
         }
     ];
 
-    /* constructor() {
-         const storedTickets = JSON.parse(localStorage.getItem(this.storagekey));
-         if (storedTickets) {
-             this.lastId = Math.max(...storedTickets.map((ticket: Ticket) => ticket.id));
-         } else {
-             this.lastId = 1;
-             localStorage.setItem(this.storagekey, JSON.stringify(this.storedTickets));
-         }
-     }
- */
     public storedUsers: User[] =
         [
             { id: 111, name: 'Victor' },
@@ -98,7 +112,6 @@ export class BackendService {
                 delay(randomDelay()),
                 tap((ticket: Ticket) => {
                     ticket.assigneeId = +userId;
-                    this.updatewithoutLocalStorage(ticket);
                 })
             );
         }
@@ -113,7 +126,6 @@ export class BackendService {
                 delay(randomDelay()),
                 tap((ticket: Ticket) => {
                     ticket.completed = completed;
-                    this.updatewithoutLocalStorage(ticket);
                 })
             );
         }
@@ -129,6 +141,16 @@ export class BackendService {
     }
     /* LOCAL STORAGE 
 
+    /* constructor() {
+         const storedTickets = JSON.parse(localStorage.getItem(this.storagekey));
+         if (storedTickets) {
+             this.lastId = Math.max(...storedTickets.map((ticket: Ticket) => ticket.id));
+         } else {
+             this.lastId = 1;
+             localStorage.setItem(this.storagekey, JSON.stringify(this.storedTickets));
+         }
+     }
+    
     public tickets(): Observable<Ticket[]> {
         this.storedTickets = JSON.parse(localStorage.getItem(this.storagekey));
         console.log(this.storedTickets + " from tickets");
