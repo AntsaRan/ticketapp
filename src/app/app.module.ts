@@ -15,10 +15,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { AddTicketModule } from './ticket/addticket-dialog/addticket.module';
 import { MatButtonModule } from '@angular/material/button';
 import { StoreModule } from '@ngrx/store';
-import { metaReducers, ticketReducer } from './data-access/state/ticket.reducer';
+import { metaReducers, ticketReducer } from './data-access/state/reducers/ticket.reducer';
 import { StoreDevtools, StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { EffectsModule } from '@ngrx/effects';
-import { TickeEffect } from './data-access/state/ticket.effects';
+import { TickeEffect } from './data-access/state/effects/ticket.effects';
 import { ROOT_FEATURE_KEY } from './data-access/state/ticket.state';
 
 @NgModule({

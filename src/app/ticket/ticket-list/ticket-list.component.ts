@@ -8,8 +8,8 @@ import { MatSort } from '@angular/material/sort';
 import { AddticketDialogComponent } from '../addticket-dialog/addticket-dialog.component';
 import { TicketUser } from 'src/app/data-access/model/ticketUser';
 import { Store, select } from '@ngrx/store';
-import { getListTicketsOnInit } from 'src/app/data-access/state/ticket.actions';
-import { checkDataReady, getTickets } from 'src/app/data-access/state/ticket.selector';
+import { getListTicketsOnInit } from 'src/app/data-access/state/actions/ticket.actions';
+import { get_DataReady, get_Tickets } from 'src/app/data-access/state/selectors/ticket.selector';
 
 @Component({
   selector: 'app-ticket-list',
@@ -32,7 +32,6 @@ import { checkDataReady, getTickets } from 'src/app/data-access/state/ticket.sel
 })
 export class TicketListComponent {
   ticketslist$: Observable<TicketUser[]>;
-  dataready = false;
   isListReady$ : Observable<boolean>;
   dataSource: MatTableDataSource<TicketUser>;
   ticketIsAdded = false;
@@ -70,16 +69,15 @@ export class TicketListComponent {
   
   getTickets1() {
     this.store.dispatch(getListTicketsOnInit());
-    this.ticketslist$ = this.store.pipe(select(getTickets));
+    this.ticketslist$ = this.store.pipe(select(get_Tickets));
     this.ticketslist$.subscribe((tickets: TicketUser[]) => {
       if (tickets.length > 0) {
         this.dataSource = new MatTableDataSource(tickets);
-        this.dataready = true;
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       }
     })
-    this.isListReady$ = this.store.pipe(select(checkDataReady));
+    this.isListReady$ = this.store.pipe(select(get_DataReady));
 
   }
 

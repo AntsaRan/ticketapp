@@ -1,7 +1,7 @@
 import { state } from "@angular/animations";
 import { Action, ActionReducer, MetaReducer, createReducer, on } from "@ngrx/store";
-import { RootState, State, initialState } from "./ticket.state";
-import { getListTicketsOnInit, getListTicketsOnInitFailure, getListTicketsOnInitSuccess, getTicketbyIdInit } from "./ticket.actions";
+import { RootState, State, initialState } from "../ticket.state";
+import { getListTicketsOnInit, getListTicketsOnInitFailure, getListTicketsOnInitSuccess, getTicketbyIdInit } from "../actions/ticket.actions";
 
 /*const initialState = {
     appName: "Ticket App",
@@ -18,9 +18,9 @@ function log(reducer: ActionReducer<State>): ActionReducer<State> {
 }
 export const ticketReducer = createReducer<RootState, Action>(
     initialState,
-    on(getListTicketsOnInit, (state: RootState) => {
+    on(getListTicketsOnInit, (state: RootState,props) => {
         return {
-            ...state,
+            ...state
         }
     }),
     on(getListTicketsOnInitSuccess, (state: RootState,props) => {

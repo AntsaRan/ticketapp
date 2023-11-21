@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { TicketUser } from "../model/ticketUser";
+import { TicketUser } from "../../model/ticketUser";
 import { Ticket } from "src/interfaces/ticket.interface";
 
 export const getListTicketsOnInit = createAction('[TICKET LIST] Fetch Ticket List On Init');
